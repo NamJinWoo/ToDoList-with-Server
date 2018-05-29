@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
+<meta charset="UTF-8">
+<title>TODO in HTML5 Skeleton</title>
+<!-- CSS, JS External 정의 -->
+<link rel="stylesheet" type="text/css" href="TP1_SKELETON_CSS.css">
+</head>
+
+<body>
+	<article>
+		<header>
+			<!-- Header (Add ToDo 버튼, keyword 검색) -->
+			<button type="button" id="Add_Btn">Add ToDo</button>
+			<section class="hidden_Sec" id= "AddToDo_Sec">
+				<section id="writingTransparentBorder"></section>
+				<!-- Add ToDo Button View -->
+				<section id="writingFormContainer">
+					<div id="Close_Btn_Div">
+					<img src="img/delete.png" alt="delete" id= "close">
+					</div>
+					<select class="AddToDo" id= "Add_Cont_Day">
+						<option value="AMon">Monday</option>
+						<option value="ATue">Tuesday</option>
+						<option value="AWed">Wednesday</option>
+						<option value="AThu">Thursday</option>
+						<option value="AFri">Friday</option>
+					</select>
+					<form action="item-store.jsp">
+					<input type="text" class="AddToDo" name = "newItemTitle" id="Add_Cont_Item" placeholder="Item">
+					<textarea class="AddToDo" id="Add_Cont_Content" name = "newItemContent" rows="8" cols="80" placeholder="Content"></textarea>
+					<button type="button" id="Add_Cont_Btn">Add</button>
+					</form>
+				</section>
+			</section>
+
+			<!--Edit 부분 -->
+			<section class="hidden_Sec" id= "AddToDo_Edit">
+				<section id="Edit_writingTransparentBorder"></section>
+				<!-- Add ToDo Button View -->
+				<section id="Edit_writingFormContainer">
+					<div id="Edit_Close_Btn_Div">
+					<img src="img/delete.png" alt="delete" id = "Edit_close">
+					</div>
+					<input type="text" class="AddToDo" id="Edit_Add_Cont_Item" placeholder="Item">
+					<textarea class="AddToDo" id="Edit_Add_Cont_Content" rows="8" cols="80" placeholder="Content"></textarea>
+					<button type="button" id="Edit_Add_Cont_Btn">Edit</button>
+				</section>
+			</section>
+			<select name="dropdown_list" id="search_day">
+				<option value="Everyday">day</option>
+				<option value="Mon">Monday</option>
+				<option value="Tue">Tuesday</option>
+				<option value="Wed">Wednesday</option>
+				<option value="Thu">Thursday</option>
+				<option value="Fri">Friday</option>
+			</select>
+			<input type="text" name="search_input" id="search_item" placeholder="Enter your keyword here" onkeypress="if(event.keyCode==13){searchItem();}" onkeyup="if(event.keyCode!=13){seachErase();}">
+			<button type="button" id="Del_Btn">Delete</button>
+
+		</header>
+
+		<main id="mainbar">
+			<div class="mainLine"></div>
+			<!-- Middle Bar A~D, Display Area A~D -->
+			<section id="middleBar_mon" class="middle">
+				<section class="middleTop"><strong>Mon</strong></section>
+				<section class="displayArea"><div id="Mon_test" class="divbar"></div></section>
+			</section>
+			<!--경계선-->
+			<div class="mainLine"></div>
+
+			<section id="middleBar_tue" class="middle">
+				<section class="middleTop"><strong>Tue</strong></section>
+				<section class="displayArea"><div id="Tue_test" class="divbar"></div></section>
+			</section>
+			<div class="mainLine"></div>
+
+			<section id="middleBar_wed" class="middle">
+				<section class="middleTop"><strong>Wed</strong></section>
+				<section class="displayArea"><div id="Wed_test" class="divbar"></div></section>
+			</section>
+			<div class="mainLine"></div>
+
+			<section id="middleBar_thu" class="middle">
+				<section class="middleTop"><strong>Thu</strong></section>
+				<section class="displayArea"><div id="Thu_test" class="divbar"></div></section>
+			</section>
+			<div class="mainLine"></div>
+
+			<section id="middleBar_Fri" class="middle">
+				<section class="middleTop"><strong>Fri</strong></section>
+				<section class="displayArea"><div id="Fri_test" class="divbar"></div></section>
+			</section>
+			<div class="mainLine"></div>
+		</main>
+	</article>
+	<script src="./TP1_SKELETON_JS.js"></script>
+</body>
+
+</html>
