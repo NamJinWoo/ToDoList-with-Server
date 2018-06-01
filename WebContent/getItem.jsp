@@ -2,6 +2,8 @@
 	pageEncoding="EUC-KR"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import="org.json.JSONObject"%>
+<%@ include file="./TP1_SKELETON_JS.js"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -10,17 +12,17 @@
 </head>
 <body>
 	<%
-		String newDay = request.getParameter("newDay");
-		String oldDay = request.getParameter("oldDay");
-		String newTitle = request.getParameter("newTitle");
-		String newContent = request.getParameter("newContent");
-		String fileName = newDay + ".txt"; //积己且 颇老疙
-		String filePath = request.getSession().getServletContext().getRealPath("/saved/");
+		String k = "kkk";
+		String fileName = "AMon" + ".txt"; //积己且 颇老疙
+		String filePath = application.getRealPath("/")+"saved\\";
 		filePath += fileName;
-		out.println(filePath);
+		out.println(filePath);	
+		JSONObject json = new JSONObject();
+		json.put("name", "jinwoo");
 		List<String> bizList = null;
 		BufferedReader br = null;
-
+		String savedTitle[];
+		String savedContent[];
 		if (!(filePath == null)) {
 			bizList = new ArrayList<String>();
 			try {
@@ -42,15 +44,15 @@
 				}
 			}
 		}
-		File f = new File(filePath);
-		f.delete();
-		f.createNewFile(); //颇老积己
-		FileWriter fw = new FileWriter(filePath); //颇老静扁按眉积己
-		for (int j = 0; j < bizList.size(); j++) {
-			fw.write(bizList.get(j) + "\r\n");//颇老俊促 累己
+		for (int i = 0; i < bizList.size(); i++) {
+			bizList.get(i).split("\t");
+
+			FileWriter fw = new FileWriter(filePath); //颇老静扁按眉积己
+			fw.close();
 		}
-		fw.close();
+
 		out.print(bizList);
 	%>
 </body>
+
 </html>

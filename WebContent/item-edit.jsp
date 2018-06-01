@@ -10,56 +10,48 @@
 </head>
 <body>
 	<%
+	request.setCharacterEncoding("UTF-8");
 		String oldTitle = request.getParameter("oldTitle");
 		String oldContent = request.getParameter("oldContent");
 		String newTitle = request.getParameter("newTitle");
 		String newContent = request.getParameter("newContent");
 		String day = request.getParameter("day");
+		int index = Integer.parseInt(request.getParameter("index"));
+		out.println(oldTitle);
+		out.println(oldContent);
+		out.println(newTitle);
+		out.println(newContent);
+		out.println(day);
+		
 		String fileName = day + ".txt"; //생성할 파일명
-		String filePath = "C:/Users/남진우/Desktop/1/";//request.getSession().getServletContext().getRealPath("/saved/");
+		String filePath = application.getRealPath("/")+"saved\\";
 		filePath += fileName;
 		out.println(filePath);
-		List<String> bizList = null;
-		BufferedReader br = null;
-		String olddata = "이름 : " + oldTitle + " 댓글: " + oldContent;
-		String newdata = "이름 : " + newTitle + " 댓글: " + newContent;
+		ArrayList<String> bizList = null;
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		
+		String olddata = oldContent+"<br>";
+		String olddata2 =  oldContent+"\r\n";
+		String newdata = "이름 :\t" + newTitle + "\t댓글:\t" + newContent;
 
-		if (!(filePath == null)) {
-			bizList = new ArrayList<String>();
-			try {
-				br = new BufferedReader(new FileReader(filePath));
-				String s;
-
-				while ((s = br.readLine()) != null) {
-					bizList.add(s);
-				}
-				br.close();
-			} catch (IOException e) {
-				System.err.println(e);
-			} finally {
-				try {
-					if (br != null) {
-						br.close();
-					}
-				} catch (Exception ex) {
-				}
+		int count = 0;
+		String dummy = "";
+		String temp = null;
+		while((temp = br.readLine()) != null){
+			if(count == index){
+				dummy+=newdata+"\r\n";
 			}
-		}
-		for (String biz : bizList) {
-			if (biz.equals(olddata)) {
-				int i = bizList.indexOf(biz);
-				bizList.set(i, newdata);
-				File f = new File(filePath);
-				f.delete();
-				f.createNewFile(); //파일생성
-				FileWriter fw = new FileWriter(filePath); //파일쓰기객체생성
-				for (int j = 0; j < bizList.size(); j++) {
-					fw.write(bizList.get(j) + "\r\n");//파일에다 작성
-				}
-				fw.close();
+			else{
+				dummy += temp+"\r\n";
 			}
+			count++;
 		}
-		out.print(bizList);
+		br.close();
+		
+		FileWriter fw = new FileWriter(filePath);
+		fw.write(dummy);
+		fw.close();
+		
 	%>
 </body>
 </html>

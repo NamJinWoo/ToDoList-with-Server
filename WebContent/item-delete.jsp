@@ -28,12 +28,12 @@
 		//out.println(delDay);
 		//out.println(DelDay);
 		String fileName = delDay + ".txt"; //생성할 파일명
-		String filePath = "C:/Users/남진우/Desktop/1/";//request.getSession().getServletContext().getRealPath("/saved/");
+		String filePath = application.getRealPath("/")+"saved/";
 		filePath += fileName;
 		out.println(filePath);
 		List<String> bizList = null;
 		BufferedReader br = null;
-		String deldata = "이름 : " + delTitle + " 댓글: " + delContent;
+		String deldata = "이름 :\t" + delTitle + "\t댓글:\t" + delContent;
 
 		if (!(filePath == null)) {
 			bizList = new ArrayList<String>();

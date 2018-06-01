@@ -16,7 +16,7 @@
 
 		if (Itemtitle != null) {
 			String fileName = ItemDay + ".txt"; //생성할 파일명
-			String filePath = "C:/Users/남진우/Desktop/1/";//request.getSession().getServletContext().getRealPath("/saved/");
+			String filePath = application.getRealPath("/")+"saved/";
 			out.println(filePath);
 			File fPath = new File(filePath); //경로생성
 
@@ -32,7 +32,7 @@
 				//File fName = new File(fileName);
 				if (f.exists()) {
 					FileWriter fw = new FileWriter(filePath,true); //파일쓰기객체생성
-					String data = "이름 : " + Itemtitle + " 댓글: " + ItemContent;
+					String data = "이름 :\t" + Itemtitle + "\t댓글:\t" + ItemContent;
 					fw.write(data+"\r\n");//파일에다 작성
 					fw.close();
 				}
@@ -40,7 +40,7 @@
 				else {
 					f.createNewFile(); //파일생성
 					FileWriter fw = new FileWriter(filePath); //파일쓰기객체생성
-					String data = "이름 : " + Itemtitle + " 댓글: " + ItemContent;
+					String data = "이름 :\t" + Itemtitle + "\t댓글:\t" + ItemContent;
 
 					fw.write(data+"\r\n");//파일에다 작성
 					fw.close(); //파일핸들 닫기
