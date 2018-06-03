@@ -13,6 +13,12 @@
 		String ItemContent = request.getParameter("content");
 		String ItemDay = request.getParameter("day");
 		
+		String date = request.getParameter("date");
+		String timePath = application.getRealPath("/")+"saved/modified.txt";
+		FileWriter fw2 = new FileWriter(timePath);
+		fw2.write(date);
+		fw2.close();
+		
 
 		if (Itemtitle != null) {
 			String fileName = ItemDay + ".txt"; //생성할 파일명

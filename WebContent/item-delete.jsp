@@ -13,6 +13,7 @@
 		String delTitle = request.getParameter("delItem");
 		String delContent = request.getParameter("delContent");
 		String delDay = request.getParameter("delDay");
+		int index = Integer.parseInt(request.getParameter("index"));
 		out.println(delDay);
 		if (delDay.equals("Mon_test")) {
 			delDay = "AMon";
@@ -28,52 +29,34 @@
 		//out.println(delDay);
 		//out.println(DelDay);
 		String fileName = delDay + ".txt"; //생성할 파일명
-		String filePath = application.getRealPath("/")+"saved/";
+		String filePath = application.getRealPath("/") + "saved/";
 		filePath += fileName;
 		out.println(filePath);
-		List<String> bizList = null;
-		BufferedReader br = null;
+		BufferedReader br =new BufferedReader(new FileReader(filePath));
 		String deldata = "이름 :\t" + delTitle + "\t댓글:\t" + delContent;
-
-		if (!(filePath == null)) {
-			bizList = new ArrayList<String>();
-			try {
-				br = new BufferedReader(new FileReader(filePath));
-				String s;
-
-				while ((s = br.readLine()) != null) {
-					bizList.add(s);
-				}
-				br.close();
-			} catch (IOException e) {
-				System.err.println(e);
-			} finally {
-				try {
-					if (br != null) {
-						br.close();
-					}
-				} catch (Exception ex) {
-				}
+		int count = 0;
+		String dummy = "";
+		String temp = null;
+		out.println("newjsp");
+		out.println(index);
+		while((temp = br.readLine()) != null){
+			if(!(count == index)){
+				dummy += temp+"\r\n";
 			}
+			count++;
 		}
-		for (String biz : bizList) {
-			if (biz.equals(deldata)) {
-				int i = bizList.indexOf(biz);
-				bizList.remove(i);
-
-				if (!bizList.isEmpty()) {
-				File f = new File(filePath);
-				f.delete();
-					f.createNewFile(); //파일생성
-					FileWriter fw = new FileWriter(filePath); //파일쓰기객체생성
-					for (int j = 0; j < bizList.size(); j++) {
-						fw.write(bizList.get(j) + "\r\n");//파일에다 작성
-					}
-					fw.close();
-				}
-			}
-		}
-		out.print(bizList);
+		br.close();
+		out.println(dummy);
+		FileWriter fw = new FileWriter(filePath);
+		fw.write(dummy);
+		fw.close();
+		
+		String date = request.getParameter("date");
+		String timePath = application.getRealPath("/")+"saved/modified.txt";
+		FileWriter fw2 = new FileWriter(timePath);
+		fw2.write(date);
+		fw2.close();
+		
 	%>
 </body>
 </html>

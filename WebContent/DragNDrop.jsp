@@ -14,43 +14,64 @@
 		String oldDay = request.getParameter("oldDay");
 		String newTitle = request.getParameter("newTitle");
 		String newContent = request.getParameter("newContent");
-		String fileName = newDay + ".txt"; //생성할 파일명
-		String filePath = request.getSession().getServletContext().getRealPath("/saved/");
+		int oldIndex = Integer.parseInt(request.getParameter("oldIndex"));
+		int newIndex = Integer.parseInt(request.getParameter("newIndex"));
+
+		String fileName = oldDay + ".txt"; //생성할 파일명
+		String filePath = application.getRealPath("/") + "saved/";
+		String fileName1 = newDay + ".txt";
+		String filePath1 = application.getRealPath("/") + "saved/";
 		filePath += fileName;
+		filePath1 += fileName1;
 		out.println(filePath);
-		List<String> bizList = null;
-		BufferedReader br = null;
+		out.println(filePath1);
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
 
-		if (!(filePath == null)) {
-			bizList = new ArrayList<String>();
-			try {
-				br = new BufferedReader(new FileReader(filePath));
-				String s;
-
-				while ((s = br.readLine()) != null) {
-					bizList.add(s);
-				}
-				br.close();
-			} catch (IOException e) {
-				System.err.println(e);
-			} finally {
-				try {
-					if (br != null) {
-						br.close();
-					}
-				} catch (Exception ex) {
-				}
+		String deldata = "이름 :\t" + newTitle + "\t댓글:\t" + newContent;
+		int count = 0;
+		String dummy = "";
+		String temp = null;
+		out.println(deldata);
+		while ((temp = br.readLine()) != null) {
+			if (!(count == oldIndex)) {
+				dummy += temp + "\r\n";
 			}
+			count++;
 		}
-		File f = new File(filePath);
-		f.delete();
-		f.createNewFile(); //파일생성
-		FileWriter fw = new FileWriter(filePath); //파일쓰기객체생성
-		for (int j = 0; j < bizList.size(); j++) {
-			fw.write(bizList.get(j) + "\r\n");//파일에다 작성
-		}
+		br.close();
+		FileWriter fw = new FileWriter(filePath);
+		fw.write(dummy);
 		fw.close();
-		out.print(bizList);
+
+		BufferedReader br1 = new BufferedReader(new FileReader(filePath1));
+
+		String deldata1 = "이름 :\t" + newTitle + "\t댓글:\t" + newContent;
+		int count1 = 0;
+		String dummy1 = "";
+		String temp1 = null;
+		while ((temp1 = br1.readLine()) != null) {
+			out.print(temp1 + "SPACE");
+			if (count1 == newIndex) {
+				dummy1 += (deldata1 + "\r\n" + temp1 + "\r\n");
+			} else {
+				dummy1 += temp1 + "\r\n";
+			}
+			count1++;
+		}
+		if (newIndex == (count1)) {
+			dummy1 += deldata1 + "\r\n";
+		}
+		br1.close();
+		out.println(dummy1);
+		FileWriter fw1 = new FileWriter(filePath1);
+		fw1.write(dummy1);
+		fw1.close();
+		
+		String date = request.getParameter("date");
+		String timePath = application.getRealPath("/")+"saved/modified.txt";
+		FileWriter fw2 = new FileWriter(timePath);
+		fw2.write(date);
+		fw2.close();
 	%>
 </body>
 </html>

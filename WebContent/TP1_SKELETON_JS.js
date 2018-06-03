@@ -36,54 +36,77 @@ var fri_array = [];
 var fri_item = [];
 var fri_title = [];
 var fri_content = [];
-var onclickIndex=0;
+var onclickIndex = 0;
 var onclickDay;
+var date = "";
+function setDate(){
+	var d = new Date();
+	date = "Last Modified : "+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+"  "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+}
 btn.onclick = function() {
 	modal.style.display = "block";
 }
 close.onclick = function() {
 	modal.style.display = "none";
 }
-$('#Edit_Add_Cont_Btn').click(
-		function(event) {
-			var index1 = AddItemArray.indexOf(onclickDay.childNodes[onclickIndex].childNodes[1].textContent);
-			var days = ["AMon","ATue","AWed","AThu","AFri"];
-			var div = $('.test_Mon').eq(onclickIndex);
-			var day = $('.displayArea').index(div.closest('section'));
-			
-			console.log(days[day]);
-			AddItemArray.splice(index1, 1, document
-					.getElementById("Edit_Add_Cont_Item").value);
-			AddContentArray.splice(index1, 1, document
-					.getElementById("Edit_Add_Cont_Content").value);
-			modal1.style.display = "none";
-			onclickDay.childNodes[onclickIndex].childNodes[1].textContent = document
-					.createTextNode(AddItemArray[index1]).textContent;
-			onclickDay.childNodes[onclickIndex].childNodes[2].firstChild.textContent = document
-					.createTextNode(AddContentArray[index1]).textContent;
-			var newItem = $('#Edit_Add_Cont_Item').val();
-			var newContent = $('#Edit_Add_Cont_Content').val();
-			console.log("index:" + onclickIndex);
-			$.ajax({
-				type : "POST",
-				url : "./item-edit.jsp",
-				data : {
-					"day" : days[day],
-					"newTitle" : newItem,
-					"newContent" : newContent,
-					"index" : onclickIndex
-				},
-				success : function(xml) {
-					console.log(xml);
-				},
-				error : function(xhr, status, error) {
-					alert("??");
-					// alert(error);
-				}
-			});
-		});
+$('#Edit_Add_Cont_Btn')
+		.click(
+				function(event) {
+					setDate();
+					$('#serverTime').text(date);
+					var index1 = AddItemArray
+							.indexOf(onclickDay.childNodes[onclickIndex].childNodes[1].textContent);
+					var days = [ "AMon", "ATue", "AWed", "AThu", "AFri" ];
+					var divClass = onclickDay.childNodes[onclickIndex]
+							.getAttribute("class");
+					console.log(divClass);
+					var div = $('.' + divClass).eq(onclickIndex);
+					var day = $('.displayArea').index(div.closest('section'));
+
+					console.log(days[day]);
+					AddItemArray.splice(index1, 1, document
+							.getElementById("Edit_Add_Cont_Item").value);
+					AddContentArray.splice(index1, 1, document
+							.getElementById("Edit_Add_Cont_Content").value);
+					modal1.style.display = "none";
+					onclickDay.childNodes[onclickIndex].childNodes[1].textContent = document
+							.createTextNode(AddItemArray[index1]).textContent;
+					onclickDay.childNodes[onclickIndex].childNodes[2].firstChild.textContent = document
+							.createTextNode(AddContentArray[index1]).textContent;
+					var newItem = $('#Edit_Add_Cont_Item').val();
+					var newContent = $('#Edit_Add_Cont_Content').val();
+					console.log("index:" + onclickIndex);
+					$.ajax({
+						type : "POST",
+						url : "./item-edit.jsp",
+						data : {
+							"day" : days[day],
+							"newTitle" : newItem,
+							"newContent" : newContent,
+							"index" : onclickIndex,
+							"date" : date
+						},
+						success : function(xml) {
+							console.log(xml);
+						},
+						error : function(xhr, status, error) {
+							alert("??");
+							// alert(error);
+						}
+					});
+				});
 
 window.onload = function() {
+	$.ajax({
+		url : "saved/modified.txt",
+		dataType : "text",
+		timeout : 30000,
+		async : false,
+		success : function(data, status, xhr) {
+			var firstdate = data;
+			$('#serverTime').text(firstdate.toString());
+		}
+	});
 
 	$.ajax({
 		url : "saved/AMon.txt",
@@ -95,14 +118,14 @@ window.onload = function() {
 			console.log(mon_string);
 		}
 	});
-	mon_array = mon_string.split("\n");
+	mon_array = mon_string.split("\r\n");
 	for (var j = 0; j < mon_array.length - 1; j++) {
 		mon_item[j] = mon_array[j].split("\t");
-
 	}
 	for (var i = 0; i < mon_item.length; i++) {
 		AddItemArray.push(mon_item[i][1]);
 		AddContentArray.push(mon_item[i][3]);
+		console.log(AddContentArray);
 		var text = document.createTextNode(AddItemArray[count]);
 		var content = document.createTextNode(AddContentArray[count]);
 		var div = document.createElement("DIV");
@@ -134,10 +157,9 @@ window.onload = function() {
 			var day = "AMon";
 			modal1.style.display = "block";
 			document.getElementById("Edit_Add_Cont_Item").value = x.childNodes[1].textContent;
-			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].textContent;
-
+			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].childNodes[0].textContent;
 		}
-		
+
 		EditClose.onclick = function() {
 			modal1.style.display = "none";
 		}
@@ -161,7 +183,7 @@ window.onload = function() {
 			console.log(tue_string);
 		}
 	});
-	tue_array = tue_string.split("\n");
+	tue_array = tue_string.split("\r\n");
 	for (var j = 0; j < tue_array.length - 1; j++) {
 		tue_item[j] = tue_array[j].split("\t");
 	}
@@ -190,51 +212,15 @@ window.onload = function() {
 		div.appendChild(div2);
 
 		div.onclick = function() {
-			var index = $(div).index();
-			var oldItem = div.parentNode.childNodes[index].childNodes[1].textContent;
-			var oldContent = div.parentNode.childNodes[index].childNodes[2].textContent;
-			var day = "ATue";
+			var x = event.target;
+			onclickIndex = $(x).index();
+			onclickDay = x.parentNode;
+			console.log(onclickIndex);
+			var oldItem = x.parentNode.childNodes[onclickIndex].childNodes[1].textContent;
+			var oldContent = x.parentNode.childNodes[onclickIndex].childNodes[2].textContent;
 			modal1.style.display = "block";
-			document.getElementById("Edit_Add_Cont_Item").value = div.childNodes[1].textContent;
-			document.getElementById("Edit_Add_Cont_Content").value = div.childNodes[2].textContent;
-			document.getElementById("Edit_Add_Cont_Btn").onclick = function() {
-				var index1 = AddItemArray
-						.indexOf(div.childNodes[1].textContent);
-				AddItemArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Item").value);
-				AddContentArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Content").value);
-				modal1.style.display = "none";
-				div.childNodes[1].textContent = document
-						.createTextNode(AddItemArray[index1]).textContent;
-				div.childNodes[2].firstChild.textContent = document
-						.createTextNode(AddContentArray[index1]).textContent;
-			}
-			$('#Edit_Add_Cont_Btn').click(function(event) {
-				var newItem = $('#Edit_Add_Cont_Item').val();
-				var newContent = $('#Edit_Add_Cont_Content').val();
-				console.log(day);
-				console.log(index);
-				console.log(oldItem);
-				console.log(oldContent);
-				$.ajax({
-					type : "POST",
-					url : "./item-edit.jsp",
-					data : {
-						"day" : day,
-						"oldTitle" : oldItem,
-						"oldContent" : oldContent,
-						"newTitle" : newItem,
-						"newContent" : newContent
-					},
-					success : function(xml) {
-						console.log(xml);
-					},
-					error : function(xhr, status, error) {
-						alert(error);
-					}
-				});
-			});
+			document.getElementById("Edit_Add_Cont_Item").value = x.childNodes[1].textContent;
+			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].childNodes[0].textContent;
 		}
 		EditClose.onclick = function() {
 			modal1.style.display = "none";
@@ -255,7 +241,7 @@ window.onload = function() {
 			// console.log(mon_string);
 		}
 	});
-	wed_array = wed_string.split("\n");
+	wed_array = wed_string.split("\r\n");
 	for (var j = 0; j < wed_array.length - 1; j++) {
 		wed_item[j] = wed_array[j].split("\t");
 	}
@@ -284,52 +270,15 @@ window.onload = function() {
 		div.appendChild(div2);
 
 		div.onclick = function() {
-			var index = $(div).index();
-			var oldItem = div.parentNode.childNodes[index].childNodes[1].textContent;
-			var oldContent = div.parentNode.childNodes[index].childNodes[2].textContent;
-			var day = "AWed";
+			var x = event.target;
+			onclickIndex = $(x).index();
+			onclickDay = x.parentNode;
+			console.log(onclickIndex);
+			var oldItem = x.parentNode.childNodes[onclickIndex].childNodes[1].textContent;
+			var oldContent = x.parentNode.childNodes[onclickIndex].childNodes[2].textContent;
 			modal1.style.display = "block";
-			document.getElementById("Edit_Add_Cont_Item").value = div.childNodes[1].textContent;
-			document.getElementById("Edit_Add_Cont_Content").value = div.childNodes[2].textContent;
-
-			document.getElementById("Edit_Add_Cont_Btn").onclick = function() {
-				var index1 = AddItemArray
-						.indexOf(div.childNodes[1].textContent);
-				AddItemArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Item").value);
-				AddContentArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Content").value);
-				modal1.style.display = "none";
-				div.childNodes[1].textContent = document
-						.createTextNode(AddItemArray[index1]).textContent;
-				div.childNodes[2].firstChild.textContent = document
-						.createTextNode(AddContentArray[index1]).textContent;
-			}
-			$('#Edit_Add_Cont_Btn').click(function(event) {
-				var newItem = $('#Edit_Add_Cont_Item').val();
-				var newContent = $('#Edit_Add_Cont_Content').val();
-				console.log(day);
-				console.log(index);
-				console.log(oldItem);
-				console.log(oldContent);
-				$.ajax({
-					type : "POST",
-					url : "./item-edit.jsp",
-					data : {
-						"day" : day,
-						"oldTitle" : oldItem,
-						"oldContent" : oldContent,
-						"newTitle" : newItem,
-						"newContent" : newContent
-					},
-					success : function(xml) {
-						console.log(xml);
-					},
-					error : function(xhr, status, error) {
-						alert(error);
-					}
-				});
-			});
+			document.getElementById("Edit_Add_Cont_Item").value = x.childNodes[1].textContent;
+			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].textContent;
 		}
 		EditClose.onclick = function() {
 			modal1.style.display = "none";
@@ -350,7 +299,7 @@ window.onload = function() {
 			// console.log(mon_string);
 		}
 	});
-	thu_array = thu_string.split("\n");
+	thu_array = thu_string.split("\r\n");
 	for (var j = 0; j < thu_array.length - 1; j++) {
 		thu_item[j] = thu_array[j].split("\t");
 	}
@@ -377,54 +326,16 @@ window.onload = function() {
 		div.appendChild(p);
 		p.appendChild(content);
 		div.appendChild(div2);
-
 		div.onclick = function() {
-			var index = $(div).index();
-			var oldItem = div.parentNode.childNodes[index].childNodes[1].textContent;
-			var oldContent = div.parentNode.childNodes[index].childNodes[2].textContent;
-			var day = "AThu";
+			var x = event.target;
+			onclickIndex = $(x).index();
+			onclickDay = x.parentNode;
+			console.log(onclickIndex);
+			var oldItem = x.parentNode.childNodes[onclickIndex].childNodes[1].textContent;
+			var oldContent = x.parentNode.childNodes[onclickIndex].childNodes[2].textContent;
 			modal1.style.display = "block";
-			document.getElementById("Edit_Add_Cont_Item").value = div.childNodes[1].textContent;
-			document.getElementById("Edit_Add_Cont_Content").value = div.childNodes[2].textContent;
-
-			document.getElementById("Edit_Add_Cont_Btn").onclick = function() {
-				var index1 = AddItemArray
-						.indexOf(div.childNodes[1].textContent);
-				AddItemArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Item").value);
-				AddContentArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Content").value);
-				modal1.style.display = "none";
-				div.childNodes[1].textContent = document
-						.createTextNode(AddItemArray[index1]).textContent;
-				div.childNodes[2].firstChild.textContent = document
-						.createTextNode(AddContentArray[index1]).textContent;
-			}
-			$('#Edit_Add_Cont_Btn').click(function(event) {
-				var newItem = $('#Edit_Add_Cont_Item').val();
-				var newContent = $('#Edit_Add_Cont_Content').val();
-				console.log(day);
-				console.log(index);
-				console.log(oldItem);
-				console.log(oldContent);
-				$.ajax({
-					type : "POST",
-					url : "./item-edit.jsp",
-					data : {
-						"day" : day,
-						"oldTitle" : oldItem,
-						"oldContent" : oldContent,
-						"newTitle" : newItem,
-						"newContent" : newContent
-					},
-					success : function(xml) {
-						console.log(xml);
-					},
-					error : function(xhr, status, error) {
-						alert(error);
-					}
-				});
-			});
+			document.getElementById("Edit_Add_Cont_Item").value = x.childNodes[1].textContent;
+			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].textContent;
 		}
 		EditClose.onclick = function() {
 			modal1.style.display = "none";
@@ -445,7 +356,7 @@ window.onload = function() {
 			// console.log(mon_string);
 		}
 	});
-	fri_array = fri_string.split("\n");
+	fri_array = fri_string.split("\r\n");
 	for (var j = 0; j < fri_array.length - 1; j++) {
 		fri_item[j] = fri_array[j].split("\t");
 	}
@@ -473,52 +384,15 @@ window.onload = function() {
 		div.appendChild(div2);
 
 		div.onclick = function() {
-			var index = $(div).index();
-			var oldItem = div.parentNode.childNodes[index].childNodes[1].textContent;
-			var oldContent = div.parentNode.childNodes[index].childNodes[2].textContent;
-			var day = "AFri";
+			var x = event.target;
+			onclickIndex = $(x).index();
+			onclickDay = x.parentNode;
+			console.log(onclickIndex);
+			var oldItem = x.parentNode.childNodes[onclickIndex].childNodes[1].textContent;
+			var oldContent = x.parentNode.childNodes[onclickIndex].childNodes[2].textContent;
 			modal1.style.display = "block";
-			document.getElementById("Edit_Add_Cont_Item").value = div.childNodes[1].textContent;
-			document.getElementById("Edit_Add_Cont_Content").value = div.childNodes[2].textContent;
-
-			document.getElementById("Edit_Add_Cont_Btn").onclick = function() {
-				var index1 = AddItemArray
-						.indexOf(div.childNodes[1].textContent);
-				AddItemArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Item").value);
-				AddContentArray.splice(index1, 1, document
-						.getElementById("Edit_Add_Cont_Content").value);
-				modal1.style.display = "none";
-				div.childNodes[1].textContent = document
-						.createTextNode(AddItemArray[index1]).textContent;
-				div.childNodes[2].firstChild.textContent = document
-						.createTextNode(AddContentArray[index1]).textContent;
-				$('#Edit_Add_Cont_Btn').click(function(event) {
-					var newItem = $('#Edit_Add_Cont_Item').val();
-					var newContent = $('#Edit_Add_Cont_Content').val();
-					console.log(day);
-					console.log(index);
-					console.log(oldItem);
-					console.log(oldContent);
-					$.ajax({
-						type : "POST",
-						url : "./item-edit.jsp",
-						data : {
-							"day" : day,
-							"oldTitle" : oldItem,
-							"oldContent" : oldContent,
-							"newTitle" : newItem,
-							"newContent" : newContent
-						},
-						success : function(xml) {
-							console.log(xml);
-						},
-						error : function(xhr, status, error) {
-							alert(error);
-						}
-					});
-				});
-			}
+			document.getElementById("Edit_Add_Cont_Item").value = x.childNodes[1].textContent;
+			document.getElementById("Edit_Add_Cont_Content").value = x.childNodes[2].textContent;
 		}
 		EditClose.onclick = function() {
 			modal1.style.display = "none";
@@ -532,6 +406,8 @@ window.onload = function() {
 $('#Del_Btn')
 		.click(
 				function() {
+					setDate();
+					$('#serverTime').text(date);
 					for (var i = 1; i < 10; i += 2) {
 						for (var j = 0; j < main1.children[i].children[1].children[0].children.length; j++) {
 							if (main1.children[i].children[1].children[0].childNodes[j].childNodes[0].childNodes[0].checked) {
@@ -548,8 +424,7 @@ $('#Del_Btn')
 										.removeChild(main1.children[i].children[1].children[0].children[j]);
 								AddItemArray.splice(index, 1);
 								AddContentArray.splice(index, 1);
-								j--;
-								count--;
+
 								console.log(delItem);
 								console.log(delContent);
 
@@ -559,15 +434,19 @@ $('#Del_Btn')
 									data : {
 										"delDay" : delDay,
 										"delItem" : delItem,
-										"delContent" : delContent
+										"delContent" : delContent,
+										"index" : j,
+										"date" : date
 									},
 									success : function(hxml) {
-										alert("??");
+										console.log(hxml);
 									},
 									error : function(xhr, status, error) {
 										alert("!!!");
 									}
 								});
+								j--;
+								count--;
 							}
 						}
 					}
@@ -575,7 +454,7 @@ $('#Del_Btn')
 
 // Add버튼 눌렀을때
 addcBtn.onclick = function() {
-	// value값을 배열안에 푸쉬했다.
+
 	var item = document.getElementById("Add_Cont_Item").value;
 	var content = document.getElementById("Add_Cont_Content").value;
 	var AddDay = document.getElementById("Add_Cont_Day").value;
@@ -1095,62 +974,103 @@ function seachErase() {
 		document.getElementById("Fri_test").childNodes[i].style.display = "block";
 	}
 }
-$(document).ready(function() {
-	$('#mainbar .divbar').sortable({
-		connectWith : '#mainbar .divbar',
-		start : function(event, ui) {
-			var oldDay;
-			console.log($(ui.item).parent().attr("id"));
-		},
-		stop : function(event, ui) {
-			// 요일별 조건문.
-			var newDay;
-			var newTitle = $(ui.item).children().eq(0).text();
-			var newContent = $(ui.item).children().eq(1).text();
-			$(ui.item).each(function() {
-				console.log($(ui.item).text());
-			});
-			console.log($(ui.item));
-			console.log(newTitle);
-			console.log(newContent);
-			console.log($(ui.item).parent().attr("id"));
-			if ($(ui.item).parent().attr("id") == "Mon_test") {
-				$(ui.item).attr('class', 'test_Mon');
-				newDay = "AMon";
-			} else if ($(ui.item).parent().attr("id") == "Tue_test") {
-				$(ui.item).attr('class', 'test_Tue');
-				newDay = "ATue";
-			} else if ($(ui.item).parent().attr("id") == "Wed_test") {
-				$(ui.item).attr('class', 'test_Wed');
-				newDay = "AWed";
-			} else if ($(ui.item).parent().attr("id") == "Thu_test") {
-				$(ui.item).attr('class', 'test_Thu');
-				newDay = "AThu";
-			} else if ($(ui.item).parent().attr("id") == "Fri_test") {
-				$(ui.item).attr('class', 'test_Fri');
-				newDay = "AFri";
-			}
-			var myIndex = $(ui.item).index();
-			var myDay = $(ui.item).parent();
-			$.ajax({
-				type : "POST",
-				url : "./DragNDrop.jsp",
-				data : {
-					"newDay" : newDay,
-					"newTitle" : newTitle,
-					"newContent" : newContent
-				},
-				success : function(xml) {
-					console.log(xml);
-				},
-				error : function(xhr, status, error) {
-					alert(error);
-				}
-			});
-		}
-	});
-});
+$(document)
+		.ready(
+				function() {
+					var oldDay;
+					var oldIndex;
+					$('#mainbar .divbar')
+							.sortable(
+									{
+										connectWith : '#mainbar .divbar',
+										start : function(event, ui) {
+
+											console.log($(ui.item).parent()
+													.attr("id"));
+											oldIndex = $(ui.item).index();
+											console.log(oldIndex);
+											if ($(ui.item).parent().attr("id") == "Mon_test") {
+												oldDay = "AMon";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Tue_test") {
+												oldDay = "ATue";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Wed_test") {
+												oldDay = "AWed";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Thu_test") {
+												oldDay = "AThu";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Fri_test") {
+												oldDay = "AFri";
+											}
+										},
+										stop : function(event, ui) {
+											setDate();
+											$('#serverTime').text(date);
+											// 요일별 조건문.
+											var newDay;
+											var newTitle = $(ui.item)
+													.contents()
+													.not($(ui.item).children())
+													.text();
+											var newContent = $(ui.item)
+													.children().eq(1).text();
+											var newIndex = $(ui.item).index();
+
+											// alert(newIndex);
+											if ($(ui.item).parent().attr("id") == "Mon_test") {
+												$(ui.item).attr('class',
+														'test_Mon');
+												newDay = "AMon";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Tue_test") {
+												$(ui.item).attr('class',
+														'test_Tue');
+												newDay = "ATue";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Wed_test") {
+												$(ui.item).attr('class',
+														'test_Wed');
+												newDay = "AWed";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Thu_test") {
+												$(ui.item).attr('class',
+														'test_Thu');
+												newDay = "AThu";
+											} else if ($(ui.item).parent()
+													.attr("id") == "Fri_test") {
+												$(ui.item).attr('class',
+														'test_Fri');
+												newDay = "AFri";
+											}
+											// alert(newIndex);
+											$.ajax({
+												type : "POST",
+												url : "./DragNDrop.jsp",
+												data : {
+													"newDay" : newDay,
+													"newTitle" : newTitle,
+													"newContent" : newContent,
+													"newIndex" : newIndex,
+													"oldDay" : oldDay,
+													"oldIndex" : oldIndex,
+													"date" : date
+												},
+												success : function(xml) {
+													console.log(xml);
+												},
+												error : function(xhr, status,
+														error) {
+													alert(error);
+												}
+											});
+										}
+									});
+				});
 $('#Add_Cont_Btn').click(function() {
+	setDate();
+	$('#serverTime').text(date);
 	var title = $('#Add_Cont_Item').val();
 	var content = $('#Add_Cont_Content').val();
 	var day = $('#Add_Cont_Day').val();
@@ -1162,7 +1082,8 @@ $('#Add_Cont_Btn').click(function() {
 		data : {
 			"title" : title,
 			"content" : content,
-			"day" : day
+			"day" : day,
+			"date" : date
 		},
 		success : function(xml) {
 			console.log(xml);

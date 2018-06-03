@@ -17,21 +17,23 @@
 		String newContent = request.getParameter("newContent");
 		String day = request.getParameter("day");
 		int index = Integer.parseInt(request.getParameter("index"));
-		out.println(oldTitle);
-		out.println(oldContent);
-		out.println(newTitle);
-		out.println(newContent);
-		out.println(day);
+		
+		String date = request.getParameter("date");
+		out.print(date);
+		String timePath = application.getRealPath("/")+"saved/modified.txt";
+		FileWriter fw2 = new FileWriter(timePath);
+		fw2.write(date);
+		fw2.close();
+		
+		
 		
 		String fileName = day + ".txt"; //생성할 파일명
 		String filePath = application.getRealPath("/")+"saved\\";
+		
 		filePath += fileName;
 		out.println(filePath);
 		ArrayList<String> bizList = null;
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
-		
-		String olddata = oldContent+"<br>";
-		String olddata2 =  oldContent+"\r\n";
 		String newdata = "이름 :\t" + newTitle + "\t댓글:\t" + newContent;
 
 		int count = 0;

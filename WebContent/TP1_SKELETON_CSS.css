@@ -56,7 +56,11 @@ main{
 	font-size: 20px;
 	font-weight: bold;
 }
-
+#serverTime{
+	width: 150px;
+	border: 1px solid black;
+	display : inline-block;
+}
 .displayArea{
 	height: 95%;
 	text-align: center;
